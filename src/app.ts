@@ -1,0 +1,62 @@
+import express from 'express';
+import config from './config/default';
+import * as http from 'http';
+import userController from './controller/user-controller';
+import bodyParser from 'body-parser';
+import errorMiddleware from '../src/middleware/error-middleware';
+
+class App{
+    app: express.Application;
+    config: config;
+    server: http.Server;
+    appRouter: express.Router;
+    userController: any;
+    bodyParser = require("body-parser");
+    
+    constructor(){
+        this.app = express();
+        this.config = new config();
+        this.server = http.createServer();
+        this.appRouter = express.Router();
+    }
+
+    init(){
+        return new Promise((resolve, reject) => {
+            try{
+                this.app.use(bodyParser.urlencoded({ extended: false }));
+                this.app.use(bodyParser.json());
+                this.routeConfig();
+                this.app.use(errorMiddleware);
+            } catch(error){
+                console.log(error);
+            } finally{
+                resolve(true);
+            }
+        }).catch((err: Error) => {
+            console.log('Unable to run.');
+            process.exit(1);
+        });
+    }
+
+    listen(): Promise<boolean>{
+        return new Promise((resolve, reject) => {
+            this.server = http.createServer(this.app);
+            this.server.on('error', (err: Error) => {
+                reject(err);
+                process.exit(2);
+            });
+            this.server.listen(this.config.port,()=>{
+                console.log("Server is running");
+                resolve(true);
+            });
+        });
+    };
+
+    routeConfig(){
+        this.app.use("", this.appRouter);
+        this.appRouter.use("/user", userController);
+    }
+}
+
+const app = new App();
+export default app;
