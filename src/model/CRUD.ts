@@ -4,7 +4,7 @@ export interface CRUD{
     create: (resource: userModel) => Promise<string>,
     getUsers: () => Promise<userModel[]>,
     getUserById: (resourceId: string) => Promise<userModel>,
-    updateById: (resourceId: string,resource: userModel) => Promise<userModel>,
+    updateById: (resourceId: string,resource: userModel) => Promise<string>,
     deleteById: (resourceId: string) => Promise<string>,
 }
 

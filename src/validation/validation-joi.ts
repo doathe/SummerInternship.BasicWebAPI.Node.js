@@ -15,7 +15,7 @@ const validationJoi = {
         surname: Joi.string().min(3).max(30).pattern(new RegExp('^[a-zA-Z0-9]{3,30}')).required(),
         email: Joi.string().email().required(),
         age: Joi.number().positive().min(18).required(),
-        id: Joi.string().min(7).max(30).required(),
+        //id: Joi.string().min(7).max(30).required(),
     }),
 
     userIdCheckSchema: Joi.object({ //ASK?

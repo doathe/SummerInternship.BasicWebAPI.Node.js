@@ -78,7 +78,7 @@ class userController implements baseRouter{
 
             validationJoi.userUpdateSchema.validateAsync(req.body).then((newUser) =>{
                 
-                userService.updateById(newUser.id,newUser).then(() =>{
+                userService.updateById(userId,newUser).then(() =>{
                     return res.status(200).send(`User updated.`);
                 }).catch((err: Error) => {
                     console.log('Error updating.');

@@ -45,7 +45,7 @@ export default class userRepository {
         });
     }
 
-    getUserById(userId: string): Promise<any>{ //Edit
+    getUserById(userId: string): Promise<any>{ //Edited, OK
         return new Promise((resolve, reject) =>{
 
             try{
@@ -92,11 +92,11 @@ export default class userRepository {
             });
     }
 
-    updateUserById(userId: string,updatedUser: userModel): Promise<userModel>{ //Edit
+    updateUserById(userId: string,updatedUser: userModel): Promise<string>{ //Edited, OK
         return new Promise((resolve, reject) =>{
 
             try{
-                this.users.forEach(user => {
+                /*this.users.forEach(user => {
                     if(userId == user.id){
                         console.log(user.id);
                         user.name = updatedUser.name;
@@ -107,12 +107,28 @@ export default class userRepository {
                         resolve(user);
                     }
                     else reject(new userNotFound());
-                });
+                });*/
+
+                var index = this.users.findIndex(user => user.id == userId);
+                    if(this.users[index].id == userId){
+
+                        this.users[index].name = updatedUser.name;
+                        this.users[index].surname = updatedUser.surname;
+                        this.users[index].email = updatedUser.email;
+                        this.users[index].age = updatedUser.age;
+                        resolve(userId);
+                    }
 
                 /*var index = this.users.find(user => user.id == userId);
+                    if(index.id == userId){
+                        const user = index
+                            user.name = updatedUser.name;
+                            user.surname = updatedUser.surname;
+                            user.email = updatedUser.email;
+                            user.age = updatedUser.age;
+                            resolve(user);
+                    }*/
 
-                    resolve(index);*/
-                
             } catch(error){
                 console.log(error);
                 reject(new processError());
@@ -120,17 +136,24 @@ export default class userRepository {
         })
     }
 
-    removeUserById(userId: string): Promise<string>{ //Edit
+    removeUserById(userId: string): Promise<string>{ //Edited, OK
         return new Promise((resolve, reject) =>{
 
             try{
-                for(let i=0;i<this.users.length;i++){
+                /*for(let i=0;i<this.users.length;i++){
                     if(this.users[i].id == userId){
                         this.users.splice(i,1);
                         resolve(userId);
                     }
                     else reject(new userNotFound());
-                }
+                }*/
+
+                var index = this.users.findIndex(user => user.id == userId);
+                    if(this.users[index].id == userId){
+
+                        this.users.splice(index,1);
+                            resolve(userId);
+                    }
             } catch(error){
                 console.log(error);
                 reject(new processError());
@@ -138,7 +161,7 @@ export default class userRepository {
         });
     }
 
-    userCheck(userCheck: userModel): Promise<boolean>{  //OK
+    userCheck(userCheck: userModel): Promise<boolean>{ //OK
         return new Promise((resolve, reject) =>{
             try{
                 const index = this.users.find(user => user.id == userCheck.id);

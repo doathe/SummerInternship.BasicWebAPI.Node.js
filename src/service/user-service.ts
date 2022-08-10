@@ -58,7 +58,7 @@ class userService implements CRUD{
         });
     }
 
-    updateById(resourceId: string, resource: userModel): Promise<userModel>{
+    updateById(resourceId: string, resource: userModel): Promise<string>{
         return new Promise((resolve, reject) =>{
             
             const user = this.userRepo.updateUserById(resourceId,resource).then((user) =>{
