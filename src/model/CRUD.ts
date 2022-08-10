@@ -3,7 +3,7 @@ import { userModel } from "./user-model";
 export interface CRUD{
     create: (resource: userModel) => Promise<string>,
     getUsers: () => Promise<userModel[]>,
-    getUserById: (resourceId: string) => Promise<userModel>,
+    getUserById: (resourceId: string) => Promise<userModel|undefined>,
     updateById: (resourceId: string,resource: userModel) => Promise<string>,
     deleteById: (resourceId: string) => Promise<string>,
 }

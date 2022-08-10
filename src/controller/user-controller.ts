@@ -30,7 +30,7 @@ class userController implements baseRouter{
             return res.status(200).send(users);
         }).catch((err: Error) => {
             console.log('Error listing.');
-            next(errorMiddleware);
+            next(err);
         })
     }
 
@@ -42,12 +42,12 @@ class userController implements baseRouter{
                 return res.status(200).send(user);
             }).catch((err: Error) => {
                 console.log('Error getting user by ID.');
-                next(errorMiddleware);
+                next(err);
             });
         })
         .catch((err: Error) =>{
             console.log('Error validating.');
-            next(errorMiddleware);
+            next(err);
         });
     }
 
@@ -60,12 +60,12 @@ class userController implements baseRouter{
                 return res.status(201).send('User created.');
             }).catch((err: Error) => {
                 console.log('Error creating user.');
-                next(errorMiddleware);
+                next(err);
             });
         })
         .catch((err: Error) =>{
             console.log('Error validating.');
-            next(errorMiddleware);
+            next(err);
         });
     }
 
@@ -82,17 +82,17 @@ class userController implements baseRouter{
                     return res.status(200).send(`User updated.`);
                 }).catch((err: Error) => {
                     console.log('Error updating.');
-                    next(errorMiddleware);
+                    next(err);
                 });
             })
             .catch((err: Error) =>{
                 console.log('Error validating.');
-                next(errorMiddleware);
+                next(err);
             });
         })
-        .catch((err: Error) =>{
+        .catch((err:Error ) =>{
             console.log('Error validating.');
-            next(errorMiddleware);
+            next(err);
         });
     }
 
@@ -104,12 +104,12 @@ class userController implements baseRouter{
                 return res.status(200).send(`${userId} User deleted.`);
             }).catch((err: Error) => {
                 console.log('Error removing user.');
-                next(errorMiddleware);
+                next(err);
             });
         })
         .catch((err: Error) =>{
             console.log('Error validating.');
-            next(errorMiddleware);
+            next(err);
         });
     }
 }

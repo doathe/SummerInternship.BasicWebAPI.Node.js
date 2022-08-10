@@ -21,15 +21,15 @@ class userService implements CRUD{
                         resolve(userId);
                     }).catch((err: Error) =>{
                         console.log('Create error.');
-                        reject(new processError());
+                        reject(err);
                     }); 
                 }
-                else if (exist == true){
+                else{
                     reject(new userAlreadyExist());
                 }
             }).catch((err: Error) =>{
                 console.log('User exist check error.');
-                reject(new processError());
+                reject(err);
             });
         });
     }
@@ -41,12 +41,12 @@ class userService implements CRUD{
                 resolve(user);
             }).catch((err: Error) =>{
                 console.log('List error.');
-                reject(new processError());
+                reject(err);
             });
         });
     }
 
-    getUserById(resourceId: string): Promise<userModel>{
+    getUserById(resourceId: string): Promise<userModel|undefined>{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.userCheck(resourceId).then((exist) =>{
@@ -55,16 +55,16 @@ class userService implements CRUD{
                         resolve(user);
                     }).catch((err: Error) =>{
                         console.log('List error.');
-                        reject(new processError());
+                        reject(err);
                     });
                 }
-                else if (exist == false){
+                else{
                     console.log('User not found.');
                     reject(new userNotFound());
                 }
             }).catch((err: Error) =>{
                 console.log('User exist check error.');
-                reject(new processError());
+                reject(err);
             });
         });
     }
@@ -78,16 +78,16 @@ class userService implements CRUD{
                         resolve(user);
                     }).catch((err: Error) =>{
                         console.log('Update error.');
-                        reject(new userNotFound());
+                        reject(err);
                     });
                 }
-                else if (exist == false){
+                else{
                     console.log('User not found.');
                     reject(new userNotFound());
                 }
             }).catch((err: Error) =>{
                 console.log('User exist check error.');
-                reject(new processError());
+                reject(err);
             });
         });
     }
@@ -101,16 +101,16 @@ class userService implements CRUD{
                         resolve(removedId);
                     }).catch((err: Error) =>{
                         console.log('Removed error.');
-                        reject(new userNotFound());
+                        reject(err);
                     });
                 }
-                else if (exist == false){
+                else{
                     console.log('User not found.');
                     reject(new userNotFound());
                 }
             }).catch((err: Error) =>{
                 console.log('User exist check error.');
-                reject(new processError());
+                reject(err);
             });
         });
     }

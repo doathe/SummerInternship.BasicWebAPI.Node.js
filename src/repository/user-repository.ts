@@ -45,7 +45,7 @@ export default class userRepository {
         });
     }
 
-    getUserById(userId: string): Promise<any>{ //Edited, OK : any ile çözebildim, find'dan kaynaklı.
+    getUserById(userId: string): Promise<userModel|undefined>{ //Edited, OK
         return new Promise((resolve, reject) =>{
 
             try{
@@ -55,9 +55,9 @@ export default class userRepository {
                     }
                     else reject(new userNotFound('User not found.'));
                 });*/
-                var index = this.users.find(user => user.id == userId);
+                var obj = this.users.find(user => user.id == userId);
 
-                  resolve(index);
+                  resolve(obj);
 
             } catch(error){
                 console.log(error);
@@ -78,13 +78,12 @@ export default class userRepository {
                             return false;
                     }); */
 
-                    const index = this.users.find(user => user.email == userEmail);
-                        if(index){
+                    const obj = this.users.find(user => user.email == userEmail);
+                        if(obj){
                             resolve(true);
                         }
-                        else if(index == null)
+                        else
                             resolve(false);
-
                 } catch(error){
                     console.log(error);
                     reject(new processError());
@@ -92,7 +91,7 @@ export default class userRepository {
             });
     }
 
-    updateUserById(userId: string,updatedUser: userModel): Promise<string>{ //Edited, OK
+    updateUserById(userId: string,updatedUser: userModel): Promise<string>{ //Edited, OK, bulunamazsa -1 döner.
         return new Promise((resolve, reject) =>{
 
             try{
@@ -109,26 +108,15 @@ export default class userRepository {
                     else reject(new userNotFound());
                 });*/
 
-                var index = this.users.findIndex(user => user.id == userId);
-                    if(this.users[index].id == userId){
+                var obj = this.users.findIndex(user => user.id == userId);
+                    if(this.users[obj].id == userId && obj > (-1)){
 
-                        this.users[index].name = updatedUser.name;
-                        this.users[index].surname = updatedUser.surname;
-                        this.users[index].email = updatedUser.email;
-                        this.users[index].age = updatedUser.age;
+                        this.users[obj].name = updatedUser.name;
+                        this.users[obj].surname = updatedUser.surname;
+                        this.users[obj].email = updatedUser.email;
+                        this.users[obj].age = updatedUser.age;
                         resolve(userId);
                     }
-
-                /*var index = this.users.find(user => user.id == userId);
-                    if(index.id == userId){
-                        const user = index
-                            user.name = updatedUser.name;
-                            user.surname = updatedUser.surname;
-                            user.email = updatedUser.email;
-                            user.age = updatedUser.age;
-                            resolve(user);
-                    }*/
-
             } catch(error){
                 console.log(error);
                 reject(new processError());
@@ -148,10 +136,10 @@ export default class userRepository {
                     else reject(new userNotFound());
                 }*/
 
-                var index = this.users.findIndex(user => user.id == userId);
-                    if(this.users[index].id == userId){
+                var obj = this.users.findIndex(user => user.id == userId);
+                    if(this.users[obj].id == userId && obj > (-1)){
 
-                        this.users.splice(index,1);
+                        this.users.splice(obj,1);
                             resolve(userId);
                     }
             } catch(error){
@@ -164,11 +152,11 @@ export default class userRepository {
     userCheck(userId: string): Promise<boolean>{ //OK
         return new Promise((resolve, reject) =>{
             try{
-                const index = this.users.find(user => user.id == userId);
-                    if(index){
+                const obj = this.users.find(user => user.id == userId);
+                    if(obj){
                         resolve(true);
                     }
-                    else if(index == null)
+                    else
                         resolve(false);
 
             } catch(error){
