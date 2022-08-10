@@ -18,11 +18,7 @@ const validationJoi = {
         //id: Joi.string().min(7).max(30).required(),
     }),
 
-    userIdCheckSchema: Joi.object({ //ASK?
-        id: Joi.string().min(7).max(30).required(),
-    }),
-
-    IdCheckSchema: Joi.string().min(7).max(30).required() //edit??
+    IdCheckSchema: Joi.string().min(7).max(30).required() //OK
 }
 
 export default validationJoi;
