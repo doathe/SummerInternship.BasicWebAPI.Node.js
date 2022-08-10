@@ -45,7 +45,7 @@ export default class userRepository {
         });
     }
 
-    getUserById(userId: string): Promise<any>{ //Edited, OK
+    getUserById(userId: string): Promise<any>{ //Edited, OK : any ile çözebildim, find'dan kaynaklı.
         return new Promise((resolve, reject) =>{
 
             try{
