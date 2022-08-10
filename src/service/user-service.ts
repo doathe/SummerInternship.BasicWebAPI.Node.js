@@ -38,47 +38,80 @@ class userService implements CRUD{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.getUser().then((user) =>{
-            resolve(user);
-        }).catch((err: Error) =>{
-            console.log('List error.');
-            reject(new processError());
-        });
+                resolve(user);
+            }).catch((err: Error) =>{
+                console.log('List error.');
+                reject(new processError());
+            });
         });
     }
 
     getUserById(resourceId: string): Promise<userModel>{
         return new Promise((resolve, reject) =>{
 
-            this.userRepo.getUserById(resourceId).then((user) =>{
-            resolve(user);
-        }).catch((err: Error) =>{
-            console.log('List error.');
-            reject(new userNotFound());
-        });
+            this.userRepo.userCheck(resourceId).then((exist) =>{
+                if(exist == true){
+                    this.userRepo.getUserById(resourceId).then((user) =>{
+                        resolve(user);
+                    }).catch((err: Error) =>{
+                        console.log('List error.');
+                        reject(new processError());
+                    });
+                }
+                else if (exist == false){
+                    console.log('User not found.');
+                    reject(new userNotFound());
+                }
+            }).catch((err: Error) =>{
+                console.log('User exist check error.');
+                reject(new processError());
+            });
         });
     }
 
     updateById(resourceId: string, resource: userModel): Promise<string>{
         return new Promise((resolve, reject) =>{
-            
-            const user = this.userRepo.updateUserById(resourceId,resource).then((user) =>{
-            resolve(user);
-        }).catch((err: Error) =>{
-            console.log('Update error.');
-            reject(new userNotFound());
-        });
+
+            this.userRepo.userCheck(resourceId).then((exist) =>{
+                if(exist == true){
+                    this.userRepo.updateUserById(resourceId,resource).then((user) =>{
+                        resolve(user);
+                    }).catch((err: Error) =>{
+                        console.log('Update error.');
+                        reject(new userNotFound());
+                    });
+                }
+                else if (exist == false){
+                    console.log('User not found.');
+                    reject(new userNotFound());
+                }
+            }).catch((err: Error) =>{
+                console.log('User exist check error.');
+                reject(new processError());
+            });
         });
     }
 
     deleteById(resourceId: string): Promise<string>{
         return new Promise((resolve, reject) =>{
 
-            this.userRepo.removeUserById(resourceId).then((removedId) =>{
-            resolve(removedId);
-        }).catch((err: Error) =>{
-            console.log('Removed error.');
-            reject(new userNotFound());
-        });
+            this.userRepo.userCheck(resourceId).then((exist) =>{
+                if(exist == true){
+                    this.userRepo.removeUserById(resourceId).then((removedId) =>{
+                        resolve(removedId);
+                    }).catch((err: Error) =>{
+                        console.log('Removed error.');
+                        reject(new userNotFound());
+                    });
+                }
+                else if (exist == false){
+                    console.log('User not found.');
+                    reject(new userNotFound());
+                }
+            }).catch((err: Error) =>{
+                console.log('User exist check error.');
+                reject(new processError());
+            });
         });
     }
 }

@@ -161,10 +161,10 @@ export default class userRepository {
         });
     }
 
-    userCheck(userCheck: userModel): Promise<boolean>{ //OK
+    userCheck(userId: string): Promise<boolean>{ //OK
         return new Promise((resolve, reject) =>{
             try{
-                const index = this.users.find(user => user.id == userCheck.id);
+                const index = this.users.find(user => user.id == userId);
                     if(index){
                         resolve(true);
                     }

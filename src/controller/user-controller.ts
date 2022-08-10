@@ -38,7 +38,7 @@ class userController implements baseRouter{
 
         validationJoi.IdCheckSchema.validateAsync(req.params.userId).then((userId) =>{
 
-            userService.getUserById(req.params.userId).then((user) =>{
+            userService.getUserById(userId).then((user) =>{
                 return res.status(200).send(user);
             }).catch((err: Error) => {
                 console.log('Error getting user by ID.');
