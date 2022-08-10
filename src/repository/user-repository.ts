@@ -2,7 +2,7 @@ import { userModel } from "../model/user-model";
 import shortid from "shortid";
 import express from "express";
 import updateUser from "../model/update-user-model"
-import HttpException from "../exception/http-exception";
+import HttpException, { processError, userNotFound } from "../exception/http-exception";
 
 export default class userRepository {
 
@@ -14,7 +14,7 @@ export default class userRepository {
         this.updateUser = new updateUser();
     }
     
-    addUser(user: userModel): Promise<string>{
+    addUser(user: userModel): Promise<string>{ //OK
         return new Promise((resolve, reject) =>{
 
             try{
@@ -24,60 +24,75 @@ export default class userRepository {
                 this.users.forEach(user => {
                     console.log(user);
                 });
-            } catch(error){
-                console.log(error);
-            } finally{
+
                 resolve(user.id);
-            }
-        });
-    }
-
-    getUser(): Promise<userModel[]>{
-        return new Promise((resolve, reject) =>{
-
-            try{
             } catch(error){
                 console.log(error);
-            } finally{
-                resolve(this.users);
+                reject(new processError());
             }
         });
     }
 
-    getUserById(userId: string): Promise<userModel>{
+    getUser(): Promise<userModel[]>{ //OK
         return new Promise((resolve, reject) =>{
 
             try{
-                this.users.forEach(user => {
+                resolve(this.users);
+            } catch(error){
+                console.log(error);
+                reject(new processError());
+            }
+        });
+    }
+
+    getUserById(userId: string): Promise<any>{ //Edit
+        return new Promise((resolve, reject) =>{
+
+            try{
+                /*this.users.forEach(user => {
                     if(userId == user.id){
                         resolve(user);
                     }
-                    else{
-                        reject(new HttpException(500, 'Invalid user informations.'));
-                    }
-                });
+                    else reject(new userNotFound('User not found.'));
+                });*/
+                var index = this.users.find(user => user.id == userId);
+
+                  resolve(index);
+
             } catch(error){
                 console.log(error);
+                reject(new processError());
             }
         });
     }
 
-    getUserByEmail(userEmail: string): Promise<string>{ //Edit
-        return new Promise((resolve, reject) =>{
+    getUserByEmail(userEmail: string): Promise<boolean>{ //OK
 
+        return new Promise((resolve, reject) =>{
                 try{
-                    this.users.forEach(user => {
+                    /*this.users.forEach(user => {
                         if(userEmail == user.email){
-                            resolve(userEmail);
+                            return true;
                         }
-                    }); 
+                        else 
+                            return false;
+                    }); */
+
+                    const index = this.users.find(user => user.email == userEmail);
+                        if(index){
+                            resolve(true);
+                        }
+                        else if(index == null)
+                            resolve(false);
+
                 } catch(error){
                     console.log(error);
+                    reject(new processError());
                 }
             });
     }
 
-    updateUserById(userId: string,updatedUser: userModel): Promise<userModel>{
+    updateUserById(userId: string,updatedUser: userModel): Promise<userModel>{ //Edit
         return new Promise((resolve, reject) =>{
 
             try{
@@ -91,17 +106,21 @@ export default class userRepository {
 
                         resolve(user);
                     }
-                    else{
-                        reject(new HttpException(500, 'Invalid user informations.'));
-                    }
+                    else reject(new userNotFound());
                 });
+
+                /*var index = this.users.find(user => user.id == userId);
+
+                    resolve(index);*/
+                
             } catch(error){
                 console.log(error);
+                reject(new processError());
             }
         })
     }
 
-    removeUserById(userId: string): Promise<string>{
+    removeUserById(userId: string): Promise<string>{ //Edit
         return new Promise((resolve, reject) =>{
 
             try{
@@ -110,12 +129,28 @@ export default class userRepository {
                         this.users.splice(i,1);
                         resolve(userId);
                     }
-                    else{
-                        reject(new HttpException(500, 'Invalid user informations.'));
-                    }
+                    else reject(new userNotFound());
                 }
             } catch(error){
                 console.log(error);
+                reject(new processError());
+            }
+        });
+    }
+
+    userCheck(userCheck: userModel): Promise<boolean>{  //OK
+        return new Promise((resolve, reject) =>{
+            try{
+                const index = this.users.find(user => user.id == userCheck.id);
+                    if(index){
+                        resolve(true);
+                    }
+                    else if(index == null)
+                        resolve(false);
+
+            } catch(error){
+                console.log(error);
+                reject(new processError());
             }
         });
     }

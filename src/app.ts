@@ -26,10 +26,10 @@ class App{
                 this.app.use(bodyParser.urlencoded({ extended: false }));
                 this.app.use(bodyParser.json());
                 this.routeConfig();
-                this.app.use(errorMiddleware);
             } catch(error){
                 console.log(error);
             } finally{
+                this.app.use(errorMiddleware);
                 resolve(true);
             }
         }).catch((err: Error) => {

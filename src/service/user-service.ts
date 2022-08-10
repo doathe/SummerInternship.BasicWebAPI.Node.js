@@ -2,6 +2,7 @@ import express from 'express';
 import { userModel } from '../model/user-model';
 import userRepository from '../repository/user-repository';
 import { CRUD } from '../model/CRUD';
+import HttpException, { processError, userNotFound, userAlreadyExist } from '../exception/http-exception';
 
 class userService implements CRUD{
 
@@ -14,22 +15,22 @@ class userService implements CRUD{
     create(resource: userModel): Promise<string>{
         return new Promise((resolve, reject) =>{
 
-            /*this.userRepo.getUserByEmail(resource.email).then((userEmail) =>{
-                if(userEmail){
-                    resolve(userEmail);
+            this.userRepo.getUserByEmail(resource.email).then((exist) =>{
+                if(exist == false){
+                        this.userRepo.addUser(resource).then((userId) =>{
+                        resolve(userId);
+                    }).catch((err: Error) =>{
+                        console.log('Create error.');
+                        reject(new processError());
+                    }); 
                 }
-                else{*/
-                this.userRepo.addUser(resource).then((userId) =>{
-                    resolve(userId);
-                }).catch((err: Error) =>{
-                    console.log('Create error.');
-                    reject(err);
-                });
-                /*}
+                else if (exist == true){
+                    reject(new userAlreadyExist());
+                }
             }).catch((err: Error) =>{
-                console.log('Create error.');
-                reject(err);
-            });*/
+                console.log('User exist check error.');
+                reject(new processError());
+            });
         });
     }
 
@@ -40,7 +41,7 @@ class userService implements CRUD{
             resolve(user);
         }).catch((err: Error) =>{
             console.log('List error.');
-            reject(err);
+            reject(new processError());
         });
         });
     }
@@ -52,7 +53,7 @@ class userService implements CRUD{
             resolve(user);
         }).catch((err: Error) =>{
             console.log('List error.');
-            reject(err);
+            reject(new userNotFound());
         });
         });
     }
@@ -64,7 +65,7 @@ class userService implements CRUD{
             resolve(user);
         }).catch((err: Error) =>{
             console.log('Update error.');
-            reject(err);
+            reject(new userNotFound());
         });
         });
     }
@@ -76,7 +77,7 @@ class userService implements CRUD{
             resolve(removedId);
         }).catch((err: Error) =>{
             console.log('Removed error.');
-            reject(err);
+            reject(new userNotFound());
         });
         });
     }
