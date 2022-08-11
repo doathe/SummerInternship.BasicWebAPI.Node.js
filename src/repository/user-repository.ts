@@ -1,8 +1,8 @@
 import { userModel } from "../model/user-model";
 import shortid from "shortid";
-import express from "express";
 import updateUser from "../model/update-user-model"
-import HttpException, { processError, userNotFound } from "../exception/http-exception";
+import { processError, userNotFound } from "../common/http-exception";
+import { successRes, userCreated, usersListed, userListedbyId, userUpdatedbyId, userRemovedbyId } from "../common/success";
 
 export default class userRepository {
 
@@ -14,7 +14,7 @@ export default class userRepository {
         this.updateUser = new updateUser();
     }
     
-    addUser(user: userModel): Promise<string>{ //OK
+    addUser(user: userModel): Promise<successRes>{ //OK
         return new Promise((resolve, reject) =>{
 
             try{
@@ -25,7 +25,7 @@ export default class userRepository {
                     console.log(user);
                 });
 
-                resolve(user.id);
+                resolve(new userCreated(user.id));
             } catch(error){
                 console.log(error);
                 reject(new processError());
@@ -33,11 +33,15 @@ export default class userRepository {
         });
     }
 
-    getUser(): Promise<userModel[]>{ //OK
+    getUser(): Promise<successRes>{ //OK
         return new Promise((resolve, reject) =>{
 
             try{
-                resolve(this.users);
+                //resolve(this.users);
+                if(this.users != null){                                                         //ASK??
+                resolve(new usersListed(this.users));
+                }
+                else reject(new userNotFound());
             } catch(error){
                 console.log(error);
                 reject(new processError());
@@ -45,7 +49,7 @@ export default class userRepository {
         });
     }
 
-    getUserById(userId: string): Promise<userModel|undefined>{ //Edited, OK
+    getUserById(userId: string): Promise<successRes>{ //Edited, OK
         return new Promise((resolve, reject) =>{
 
             try{
@@ -57,7 +61,8 @@ export default class userRepository {
                 });*/
                 var obj = this.users.find(user => user.id == userId);
 
-                  resolve(obj);
+                  //resolve(obj);
+                  resolve(new userListedbyId(obj,userId));
 
             } catch(error){
                 console.log(error);
@@ -91,7 +96,7 @@ export default class userRepository {
             });
     }
 
-    updateUserById(userId: string,updatedUser: userModel): Promise<string>{ //Edited, OK, bulunamazsa -1 döner.
+    updateUserById(userId: string,updatedUser: userModel): Promise<successRes>{ //Edited, OK, bulunamazsa -1 döner.
         return new Promise((resolve, reject) =>{
 
             try{
@@ -115,7 +120,8 @@ export default class userRepository {
                         this.users[obj].surname = updatedUser.surname;
                         this.users[obj].email = updatedUser.email;
                         this.users[obj].age = updatedUser.age;
-                        resolve(userId);
+                        //resolve(userId);
+                        resolve(new userUpdatedbyId(this.users[obj],userId));
                     }
             } catch(error){
                 console.log(error);
@@ -124,7 +130,7 @@ export default class userRepository {
         })
     }
 
-    removeUserById(userId: string): Promise<string>{ //Edited, OK
+    removeUserById(userId: string): Promise<successRes>{ //Edited, OK
         return new Promise((resolve, reject) =>{
 
             try{
@@ -140,7 +146,9 @@ export default class userRepository {
                     if(this.users[obj].id == userId && obj > (-1)){
 
                         this.users.splice(obj,1);
-                            resolve(userId);
+                            //resolve(userId);
+                            resolve(new userRemovedbyId(userId));
+
                     }
             } catch(error){
                 console.log(error);

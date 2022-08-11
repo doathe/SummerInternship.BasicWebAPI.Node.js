@@ -2,7 +2,8 @@ import express from 'express';
 import { userModel } from '../model/user-model';
 import userRepository from '../repository/user-repository';
 import { CRUD } from '../model/CRUD';
-import HttpException, { processError, userNotFound, userAlreadyExist } from '../exception/http-exception';
+import HttpException, { processError, userNotFound, userAlreadyExist } from '../common/http-exception';
+import { successRes } from '../common/success';
 
 class userService implements CRUD{
 
@@ -12,13 +13,13 @@ class userService implements CRUD{
         this.userRepo = new userRepository();
     }
 
-    create(resource: userModel): Promise<string>{
+    create(resource: userModel): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.getUserByEmail(resource.email).then((exist) =>{
                 if(exist == false){
-                        this.userRepo.addUser(resource).then((userId) =>{
-                        resolve(userId);
+                        this.userRepo.addUser(resource).then((user) =>{
+                        resolve(user);
                     }).catch((err: Error) =>{
                         console.log('Create error.');
                         reject(err);
@@ -34,7 +35,7 @@ class userService implements CRUD{
         });
     }
 
-    getUsers(): Promise<userModel[]>{
+    getUsers(): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.getUser().then((user) =>{
@@ -46,13 +47,13 @@ class userService implements CRUD{
         });
     }
 
-    getUserById(resourceId: string): Promise<userModel|undefined>{
+    getUserById(resourceId: string): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.userCheck(resourceId).then((exist) =>{
                 if(exist == true){
-                    this.userRepo.getUserById(resourceId).then((user) =>{
-                        resolve(user);
+                    this.userRepo.getUserById(resourceId).then((succ_res) =>{
+                        resolve(succ_res);
                     }).catch((err: Error) =>{
                         console.log('List error.');
                         reject(err);
@@ -69,13 +70,13 @@ class userService implements CRUD{
         });
     }
 
-    updateById(resourceId: string, resource: userModel): Promise<string>{
+    updateById(resourceId: string, resource: userModel): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.userCheck(resourceId).then((exist) =>{
                 if(exist == true){
-                    this.userRepo.updateUserById(resourceId,resource).then((user) =>{
-                        resolve(user);
+                    this.userRepo.updateUserById(resourceId,resource).then((succ_res) =>{
+                        resolve(succ_res);
                     }).catch((err: Error) =>{
                         console.log('Update error.');
                         reject(err);
@@ -92,13 +93,13 @@ class userService implements CRUD{
         });
     }
 
-    deleteById(resourceId: string): Promise<string>{
+    deleteById(resourceId: string): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.userCheck(resourceId).then((exist) =>{
                 if(exist == true){
-                    this.userRepo.removeUserById(resourceId).then((removedId) =>{
-                        resolve(removedId);
+                    this.userRepo.removeUserById(resourceId).then((succ_res) =>{
+                        resolve(succ_res);
                     }).catch((err: Error) =>{
                         console.log('Removed error.');
                         reject(err);

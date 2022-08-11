@@ -1,9 +1,10 @@
 import express from 'express';
-import config from './config/default';
+import config from '../default';
 import * as http from 'http';
 import userController from './controller/user-controller';
 import bodyParser from 'body-parser';
 import errorMiddleware from '../src/middleware/error-middleware';
+import 'dotenv/config';
 
 class App{
     app: express.Application;

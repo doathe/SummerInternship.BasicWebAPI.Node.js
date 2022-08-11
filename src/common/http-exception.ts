@@ -1,4 +1,3 @@
-import { string } from "joi";
 
 export default class HttpException extends Error{
     
@@ -33,7 +32,7 @@ export default class HttpException extends Error{
 
       constructor(message?:string){
         
-        message = message || 'Something went wrong.';
+        message = message || 'The process cannot be performed';
         super(400,message); //400 Bad Request
 
       }

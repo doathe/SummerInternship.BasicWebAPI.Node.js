@@ -2,8 +2,6 @@ import express from 'express';
 import userService from '../service/user-service';
 import baseRouter from './base-router';
 import validationJoi from '../validation/validation-joi';
-import errorMiddleware from '../middleware/error-middleware';
-import HttpException from '../exception/http-exception';
 
 class userController implements baseRouter{
     router: express.Router;
@@ -26,8 +24,9 @@ class userController implements baseRouter{
 
     getUsers(req: express.Request, res: express.Response, next: express.NextFunction) {
 
-        userService.getUsers().then((users) => {
-            return res.status(200).send(users);
+        userService.getUsers().then((succ_res) => {
+            //return res.status(200).send(users);
+            res.json(succ_res);
         }).catch((err: Error) => {
             console.log('Error listing.');
             next(err);
@@ -38,8 +37,9 @@ class userController implements baseRouter{
 
         validationJoi.IdCheckSchema.validateAsync(req.params.userId).then((userId) =>{
 
-            userService.getUserById(userId).then((user) =>{
-                return res.status(200).send(user);
+            userService.getUserById(userId).then((succ_res) =>{
+                //return res.status(200).send(user);
+                res.json(succ_res);
             }).catch((err: Error) => {
                 console.log('Error getting user by ID.');
                 next(err);
@@ -55,9 +55,10 @@ class userController implements baseRouter{
 
         validationJoi.userCreateSchema.validateAsync(req.body).then((newUser) =>{
 
-            userService.create(newUser).then(() =>{
+            userService.create(newUser).then((succ_res) =>{
 
-                return res.status(201).send('User created.');
+                //return res.status(201).send('User created.');
+                res.json(succ_res);
             }).catch((err: Error) => {
                 console.log('Error creating user.');
                 next(err);
@@ -78,8 +79,9 @@ class userController implements baseRouter{
 
             validationJoi.userUpdateSchema.validateAsync(req.body).then((newUser) =>{
                 
-                userService.updateById(userId,newUser).then(() =>{
-                    return res.status(200).send(`User updated.`);
+                userService.updateById(userId,newUser).then((succ_res) =>{
+                    //return res.status(200).send(`User updated.`);
+                    res.json(succ_res);
                 }).catch((err: Error) => {
                     console.log('Error updating.');
                     next(err);
@@ -100,8 +102,9 @@ class userController implements baseRouter{
 
         validationJoi.IdCheckSchema.validateAsync(req.params.userId).then((userId) =>{
 
-            userService.deleteById(userId).then((userId) =>{
-                return res.status(200).send(`${userId} User deleted.`);
+            userService.deleteById(userId).then((succ_res) =>{
+                //return res.status(200).send(`${userId} User deleted.`);
+                res.json(succ_res);
             }).catch((err: Error) => {
                 console.log('Error removing user.');
                 next(err);

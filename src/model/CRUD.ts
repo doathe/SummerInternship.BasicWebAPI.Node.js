@@ -1,11 +1,12 @@
 import { userModel } from "./user-model";
+import { successRes } from "../common/success";
 
 export interface CRUD{
-    create: (resource: userModel) => Promise<string>,
-    getUsers: () => Promise<userModel[]>,
-    getUserById: (resourceId: string) => Promise<userModel|undefined>,
-    updateById: (resourceId: string,resource: userModel) => Promise<string>,
-    deleteById: (resourceId: string) => Promise<string>,
+    create: (resource: userModel) => Promise<successRes>,
+    getUsers: () => Promise<successRes>,
+    getUserById: (resourceId: string) => Promise<successRes>,
+    updateById: (resourceId: string,resource: userModel) => Promise<successRes>,
+    deleteById: (resourceId: string) => Promise<successRes>,
 }
 
 /*export interface CRUDRepo{
