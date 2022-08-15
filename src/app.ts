@@ -4,7 +4,7 @@ import * as http from 'http';
 import userController from './controller/user-controller';
 import bodyParser from 'body-parser';
 import errorMiddleware from '../src/middleware/error-middleware';
-import 'dotenv/config';
+import DB from './db/db';
 
 class App{
     app: express.Application;
@@ -27,6 +27,7 @@ class App{
                 this.app.use(bodyParser.urlencoded({ extended: false }));
                 this.app.use(bodyParser.json());
                 this.routeConfig();
+                DB.start();
             } catch(error){
                 console.log(error);
             } finally{

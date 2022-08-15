@@ -5,7 +5,7 @@ import { DBError } from "../common/http-exception";
 class DB{
 
     config: Knex.Config = {
-        client: 'postgres',
+        client: 'pg',
         connection: {
             host: config.PG_host,
             user: config.PG_user,
@@ -13,12 +13,11 @@ class DB{
             database: config.PG_db,
             port: config.PG_port,
         },
-        pool:{min:0, max:7}
-    }
-
-    migration_config: Knex.MigratorConfig = {
-        directory: "./src/db/migrations",
-        tableName: "knex_user_migrations"
+        pool:{min:0, max:7},
+        migrations:{
+            directory: __dirname + "/migrations",
+            tableName: "knex_user_migrations"
+        }
     }
 
     knx: Knex = knex(this.config);
@@ -26,8 +25,7 @@ class DB{
     start(): Promise<boolean>{
         return new Promise<boolean>(async (resolve,reject) =>{
 
-            this.knx.migrate.latest(this.migration_config).then(async (res) =>{
-                console.log(res);
+            this.knx.migrate.latest();
                 console.log("Migration completed.");
 
                 await this.knx.raw('SELECT now()')
@@ -40,14 +38,7 @@ class DB{
 
                     console.log('DB connected.');
                     resolve(true);
-                });
-
-            }).catch((err) =>{
-
-                console.log('Migration error.');
-                reject(new DBError(err));
-            });
-
+                })
         })
     }
 }
