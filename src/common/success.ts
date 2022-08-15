@@ -14,9 +14,9 @@ export class successRes{
     export class userCreated extends successRes{
 
       constructor(id: string, message?:string){
-        
+
         message = message || `User with id: ${id} created.`;
-        super(message,id);
+        super(message,'id: ${id}');                                                                 //?
       }
     }
 

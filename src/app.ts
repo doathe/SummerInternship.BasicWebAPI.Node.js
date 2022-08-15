@@ -1,5 +1,5 @@
 import express from 'express';
-import config from '../default';
+import config from '../config';
 import * as http from 'http';
 import userController from './controller/user-controller';
 import bodyParser from 'body-parser';
@@ -8,7 +8,7 @@ import 'dotenv/config';
 
 class App{
     app: express.Application;
-    config: config;
+
     server: http.Server;
     appRouter: express.Router;
     userController: any;
@@ -16,7 +16,7 @@ class App{
     
     constructor(){
         this.app = express();
-        this.config = new config();
+
         this.server = http.createServer();
         this.appRouter = express.Router();
     }
@@ -46,7 +46,7 @@ class App{
                 reject(err);
                 process.exit(2);
             });
-            this.server.listen(this.config.port,()=>{
+            this.server.listen(config.port,()=>{
                 console.log("Server is running");
                 resolve(true);
             });

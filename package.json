@@ -5,7 +5,9 @@
   "main": "src/app.ts",
   "scripts": {
     "start": "nodemon src/boot.ts",
-    "lint": "eslint . --ext .ts"
+    "test": "nodemon src/boot-db.ts",
+    "lint": "eslint . --ext .ts",
+    "knex": "knex"
   },
   "keywords": [],
   "author": "doathe <nisa.tur@gmail.com>",
@@ -29,6 +31,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "joi": "^17.6.0",
+    "knex": "^2.2.0",
     "nodemon": "^2.0.19",
     "pg": "^8.7.3",
     "shortid": "^2.2.16"

@@ -37,3 +37,13 @@ export default class HttpException extends Error{
 
       }
     }
+
+    export class DBError extends HttpException{
+
+      constructor(message?:string){
+        
+        message = message || 'DB cannot be performed';
+        super(400,message); //400 Bad Request
+
+      }
+    }
