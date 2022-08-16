@@ -28,16 +28,15 @@ class DB{
             this.knx.migrate.latest();
                 console.log("Migration completed.");
 
-                await this.knx.raw('SELECT now()')
+                await this.knx.raw('SELECT now()').then(() =>{
+                    console.log('DB connected.');
+                    resolve(true);
+                })
                 .catch((err) =>{
 
                     console.log(err);
                     reject(new DBError('Unable to connect DB.'))
 
-                }).finally(() =>{
-
-                    console.log('DB connected.');
-                    resolve(true);
                 })
         })
     }

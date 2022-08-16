@@ -1,176 +1,120 @@
 import { userModel } from "../model/user-model";
-import shortid from "shortid";
-import updateUser from "../model/update-user-model"
 import { processError, userNotFound } from "../common/http-exception";
 import { successRes, userCreated, usersListed, userListedbyId, userUpdatedbyId, userRemovedbyId } from "../common/success";
+import db from "../db/db";
 
 export default class userRepository {
-
-    users: Array<userModel>;
-    updateUser: updateUser;
-
-    constructor(){
-        this.users = [];
-        this.updateUser = new updateUser();
-    }
     
-    addUser(user: userModel): Promise<successRes>{ //OK
+    addUser(newUser: userModel): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
-            try{
-                user.id = shortid.generate();
-                this.users.push(user);
-
-                this.users.forEach(user => {
-                    console.log(user);
-                });
-
-                resolve(new userCreated(user.id));
-            } catch(error){
+            db.knx("user").insert(newUser).returning("id")
+            .then((user) =>{                                                            //row length kontrol et
+                if(user[0]){
+                    resolve(new userCreated(user[0].id));
+                } else 
+                    reject(new userNotFound());
+            
+            }).catch((error) =>{
                 console.log(error);
                 reject(new processError());
-            }
+            });       
+        });
+    };
+    
+    getUser(): Promise<successRes>{
+        return new Promise((resolve, reject) =>{
+
+            db.knx("user").select("*")
+            .then((users) =>{
+                resolve(new usersListed(users));
+            }).catch((error) =>{
+                console.log(error);
+                reject(new processError());
+            });
         });
     }
 
-    getUser(): Promise<successRes>{ //OK
+    getUserById(userId: number): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
-            try{
-                //resolve(this.users);
-                if(this.users != null){                                                         //ASK??
-                resolve(new usersListed(this.users));
-                }
-                else reject(new userNotFound());
-            } catch(error){
+            db.knx("user").select("*").where("id", userId)
+
+            .then((user) =>{
+                if(user[0]){
+                    resolve(new userListedbyId(user[0]));
+                } else 
+                    reject(new userNotFound());
+                
+            }).catch((error) =>{
                 console.log(error);
                 reject(new processError());
-            }
+            });
         });
     }
 
-    getUserById(userId: string): Promise<successRes>{ //Edited, OK
+    getUserByEmail(userEmail: string): Promise<boolean>{
         return new Promise((resolve, reject) =>{
 
-            try{
-                /*this.users.forEach(user => {
-                    if(userId == user.id){
-                        resolve(user);
-                    }
-                    else reject(new userNotFound('User not found.'));
-                });*/
-                var obj = this.users.find(user => user.id == userId);
+                db.knx("user").select("*").where("email", userEmail)
 
-                  //resolve(obj);
-                  resolve(new userListedbyId(obj,userId));
-
-            } catch(error){
-                console.log(error);
-                reject(new processError());
-            }
-        });
-    }
-
-    getUserByEmail(userEmail: string): Promise<boolean>{ //OK
-
-        return new Promise((resolve, reject) =>{
-                try{
-                    /*this.users.forEach(user => {
-                        if(userEmail == user.email){
-                            return true;
-                        }
-                        else 
-                            return false;
-                    }); */
-
-                    const obj = this.users.find(user => user.email == userEmail);
-                        if(obj){
-                            resolve(true);
-                        }
-                        else
-                            resolve(false);
-                } catch(error){
+                .then((user) =>{
+                    if(user[0]){
+                        resolve(true);
+                    } else 
+                        resolve(false);
+                }).catch((error) =>{
                     console.log(error);
                     reject(new processError());
-                }
+                });
             });
     }
 
-    updateUserById(userId: string,updatedUser: userModel): Promise<successRes>{ //Edited, OK, bulunamazsa -1 döner.
+    updateUserById(userId: number,updatedUser: userModel): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
-            try{
-                /*this.users.forEach(user => {
-                    if(userId == user.id){
-                        console.log(user.id);
-                        user.name = updatedUser.name;
-                        user.surname = updatedUser.surname;
-                        user.email = updatedUser.email;
-                        user.age = updatedUser.age;
+            db.knx("user").where("id", userId).update(updatedUser).returning("id")
 
-                        resolve(user);
-                    }
-                    else reject(new userNotFound());
-                });*/
-
-                var obj = this.users.findIndex(user => user.id == userId);
-                    if(this.users[obj].id == userId && obj > (-1)){
-
-                        this.users[obj].name = updatedUser.name;
-                        this.users[obj].surname = updatedUser.surname;
-                        this.users[obj].email = updatedUser.email;
-                        this.users[obj].age = updatedUser.age;
-                        //resolve(userId);
-                        resolve(new userUpdatedbyId(this.users[obj],userId));
-                    }
-            } catch(error){
+            .then((user) =>{                                                        //user length 0dan büyük mü
+                if(user[0]){
+                    resolve(new userUpdatedbyId(user[0].id));
+                } else 
+                    reject(new userNotFound());
+            }).catch((error) =>{
                 console.log(error);
                 reject(new processError());
-            }
+            })  
         })
     }
 
-    removeUserById(userId: string): Promise<successRes>{ //Edited, OK
+    removeUserById(userId: number): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
-            try{
-                /*for(let i=0;i<this.users.length;i++){
-                    if(this.users[i].id == userId){
-                        this.users.splice(i,1);
-                        resolve(userId);
-                    }
-                    else reject(new userNotFound());
-                }*/
-
-                var obj = this.users.findIndex(user => user.id == userId);
-                    if(this.users[obj].id == userId && obj > (-1)){
-
-                        this.users.splice(obj,1);
-                            //resolve(userId);
-                            resolve(new userRemovedbyId(userId));
-
-                    }
-            } catch(error){
+            db.knx("user").where("id", userId).del()
+            .then(() =>{
+                resolve(new userRemovedbyId(userId));
+            }).catch((error) =>{
                 console.log(error);
                 reject(new processError());
-            }
+            })
         });
     }
 
-    userCheck(userId: string): Promise<boolean>{ //OK
+    userCheck(userId: number): Promise<boolean>{
         return new Promise((resolve, reject) =>{
-            try{
-                const obj = this.users.find(user => user.id == userId);
-                    if(obj){
+
+            db.knx("user").select("*").where("id", userId)
+
+                .then((user) =>{
+                    if(user[0]){
                         resolve(true);
                     }
                     else
                         resolve(false);
-
-            } catch(error){
-                console.log(error);
-                reject(new processError());
-            }
+                }).catch((error) =>{
+                    console.log(error);
+                    reject(new processError());
+                });
         });
     }
 }

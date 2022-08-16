@@ -12,7 +12,7 @@ class userController implements baseRouter{
     }
 
     routes():void{
-        this.router.get('/healtcheck', (req: express.Request, res: express.Response) => {
+        this.router.get('/healtcheck', (req: express.Request, res: express.Response) =>{
             res.status(200).send(`Get received.`)
         });
         this.router.get('/', this.getUsers);
@@ -25,7 +25,6 @@ class userController implements baseRouter{
     getUsers(req: express.Request, res: express.Response, next: express.NextFunction) {
 
         userService.getUsers().then((succ_res) => {
-            //return res.status(200).send(users);
             res.json(succ_res);
         }).catch((err: Error) => {
             console.log('Error listing.');
@@ -33,12 +32,11 @@ class userController implements baseRouter{
         })
     }
 
-    getUserById(req: express.Request, res: express.Response, next: express.NextFunction){ //ASK?
+    getUserById(req: express.Request, res: express.Response, next: express.NextFunction){
 
         validationJoi.IdCheckSchema.validateAsync(req.params.userId).then((userId) =>{
 
             userService.getUserById(userId).then((succ_res) =>{
-                //return res.status(200).send(user);
                 res.json(succ_res);
             }).catch((err: Error) => {
                 console.log('Error getting user by ID.');
@@ -51,13 +49,11 @@ class userController implements baseRouter{
         });
     }
 
-    createUser(req: express.Request, res: express.Response, next: express.NextFunction){ //OK
+    createUser(req: express.Request, res: express.Response, next: express.NextFunction){
 
         validationJoi.userCreateSchema.validateAsync(req.body).then((newUser) =>{
 
             userService.create(newUser).then((succ_res) =>{
-
-                //return res.status(201).send('User created.');
                 res.json(succ_res);
             }).catch((err: Error) => {
                 console.log('Error creating user.');
@@ -70,7 +66,7 @@ class userController implements baseRouter{
         });
     }
 
-    putUser(req: express.Request, res: express.Response, next: express.NextFunction){ //ASK?
+    putUser(req: express.Request, res: express.Response, next: express.NextFunction){
 
         /*const userId:string = req.params.userId;
         const requestData:any = {Id:userId, ...req.body}; //interface*/
@@ -80,7 +76,6 @@ class userController implements baseRouter{
             validationJoi.userUpdateSchema.validateAsync(req.body).then((newUser) =>{
                 
                 userService.updateById(userId,newUser).then((succ_res) =>{
-                    //return res.status(200).send(`User updated.`);
                     res.json(succ_res);
                 }).catch((err: Error) => {
                     console.log('Error updating.');
@@ -98,12 +93,11 @@ class userController implements baseRouter{
         });
     }
 
-    removeUser(req: express.Request, res: express.Response, next: express.NextFunction){ //OK
+    removeUser(req: express.Request, res: express.Response, next: express.NextFunction){
 
         validationJoi.IdCheckSchema.validateAsync(req.params.userId).then((userId) =>{
 
             userService.deleteById(userId).then((succ_res) =>{
-                //return res.status(200).send(`${userId} User deleted.`);
                 res.json(succ_res);
             }).catch((err: Error) => {
                 console.log('Error removing user.');

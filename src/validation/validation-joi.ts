@@ -14,10 +14,9 @@ const validationJoi = {
         surname: Joi.string().min(3).max(30).pattern(new RegExp('^[a-zA-Z0-9]{3,30}')).required(),
         email: Joi.string().email().required(),
         age: Joi.number().positive().min(18).required(),
-        //id: Joi.string().min(7).max(30).required(),
     }),
 
-    IdCheckSchema: Joi.string().min(7).max(30).required() //OK
+    IdCheckSchema: Joi.number().positive().required() //OK
 }
 
 export default validationJoi;

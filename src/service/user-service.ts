@@ -47,7 +47,7 @@ class userService implements CRUD{
         });
     }
 
-    getUserById(resourceId: string): Promise<successRes>{
+    getUserById(resourceId: number): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.userCheck(resourceId).then((exist) =>{
@@ -57,7 +57,7 @@ class userService implements CRUD{
                     }).catch((err: Error) =>{
                         console.log('List error.');
                         reject(err);
-                    });
+                    })
                 }
                 else{
                     console.log('User not found.');
@@ -70,13 +70,23 @@ class userService implements CRUD{
         });
     }
 
-    updateById(resourceId: string, resource: userModel): Promise<successRes>{
+    updateById(resourceId: number, resource: userModel): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.userCheck(resourceId).then((exist) =>{
                 if(exist == true){
-                    this.userRepo.updateUserById(resourceId,resource).then((succ_res) =>{
-                        resolve(succ_res);
+                    this.userRepo.getUserByEmail(resource.email).then((exist) =>{
+                        if(exist == false){
+                                this.userRepo.updateUserById(resourceId,resource).then((succ_res) =>{
+                                resolve(succ_res);
+                            }).catch((err: Error) =>{
+                                console.log('Update error.');
+                                reject(err);
+                            }); 
+                        }
+                        else{
+                            reject(new userAlreadyExist());
+                        }
                     }).catch((err: Error) =>{
                         console.log('Update error.');
                         reject(err);
@@ -93,7 +103,7 @@ class userService implements CRUD{
         });
     }
 
-    deleteById(resourceId: string): Promise<successRes>{
+    deleteById(resourceId: number): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
             this.userRepo.userCheck(resourceId).then((exist) =>{

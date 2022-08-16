@@ -13,10 +13,10 @@ export class successRes{
 }
     export class userCreated extends successRes{
 
-      constructor(id: string, message?:string){
+      constructor(id:number, message?:string){
 
         message = message || `User with id: ${id} created.`;
-        super(message,'id: ${id}');                                                                 //?
+        super(message,'id: ${id}');                                                                 //?????????????????????
       }
     }
 
@@ -31,25 +31,25 @@ export class successRes{
 
     export class userListedbyId extends successRes{
 
-        constructor(user: userModel|undefined, id:string, message?:string){
+        constructor(user: userModel|undefined, message?:string){
           
-          message = message || `User with id: ${id} listed.`;
+          message = message || `User with id: ${user?.id} listed.`;
           super(message,user);
         }
     }
 
     export class userUpdatedbyId extends successRes{
 
-        constructor(user: userModel|undefined, id:string, message?:string){
+        constructor(id:number, message?:string){
           
           message = message || `User with id: ${id} updated.`;
-          super(message,user);
+          super(message,id);
         }
     }
 
     export class userRemovedbyId extends successRes{
 
-        constructor(id: string, message?:string){
+        constructor(id: number, message?:string){
         
             message = message || `User with id: ${id} removed.`;
             super(message,id);
