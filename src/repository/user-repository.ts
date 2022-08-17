@@ -25,7 +25,7 @@ export default class userRepository {
     getUser(): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
-            db.knx("user").select("*")
+            db.knx("user").select("*"). orderBy("id")
             .then((users) =>{
                 resolve(new usersListed(users));
             }).catch((error) =>{

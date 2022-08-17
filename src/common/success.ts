@@ -3,9 +3,9 @@ import { userModel } from "../model/user-model";
 export class successRes{
     
     data?: any;
-    message: string;
+    message?: string;
 
-    constructor(message: string, data:any){
+    constructor(message?: string, data?:any){
 
       this.data = data;
       this.message = message;
@@ -16,11 +16,11 @@ export class successRes{
       constructor(id:number, message?:string){
 
         message = message || `User with id: ${id} created.`;
-        super(message,'id: ${id}');                                                                 //?????????????????????
+        super(message);
       }
     }
 
-    export class usersListed extends successRes{
+    export class usersListed extends successRes{  //Count gelecek.
 
         constructor(users: userModel[], message?:string){
           
@@ -43,7 +43,7 @@ export class successRes{
         constructor(id:number, message?:string){
           
           message = message || `User with id: ${id} updated.`;
-          super(message,id);
+          super(message);
         }
     }
 
@@ -52,6 +52,6 @@ export class successRes{
         constructor(id: number, message?:string){
         
             message = message || `User with id: ${id} removed.`;
-            super(message,id);
+            super(message);
           }
     }

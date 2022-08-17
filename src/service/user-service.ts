@@ -70,7 +70,7 @@ class userService implements CRUD{
         });
     }
 
-    updateById(resourceId: number, resource: userModel): Promise<successRes>{
+    updateById(resourceId: number, resource: userModel): Promise<successRes>{ //First, user check with id, then user check with email.
         return new Promise((resolve, reject) =>{
 
             this.userRepo.userCheck(resourceId).then((exist) =>{
