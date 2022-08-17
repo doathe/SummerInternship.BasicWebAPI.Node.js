@@ -38,6 +38,15 @@ export default class HttpException extends Error{
       }
     }
 
+    export class emailAlreadyExist extends HttpException{
+
+      constructor(message?:string){
+        
+        message = message || 'Email already exist.';
+        super(405,message);
+      }
+    }
+
     export class DBError extends HttpException{
 
       constructor(message?:string){

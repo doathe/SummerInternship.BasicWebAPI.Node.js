@@ -9,11 +9,11 @@ export default class userRepository {
         return new Promise((resolve, reject) =>{
 
             db.knx("user").insert(newUser).returning("id")
-            .then((user) =>{                                                            //row length kontrol et
+            .then((user) =>{
                 if(user[0]){
                     resolve(new userCreated(user[0].id));
                 } else 
-                    reject(new userNotFound());
+                    reject(new userNotFound());                                                                         //Create error.(DB)
             
             }).catch((error) =>{
                 console.log(error);
@@ -53,14 +53,41 @@ export default class userRepository {
         });
     }
 
-    getUserByEmail(userEmail: string): Promise<boolean>{
+    updateUserEmailCheck(userId: number,userEmail: string): Promise<boolean>{
         return new Promise((resolve, reject) =>{
 
                 db.knx("user").select("*").where("email", userEmail)
 
                 .then((user) =>{
                     if(user[0]){
-                        resolve(true);
+
+                        db.knx("user").select("*").where("id",userId)
+                        
+                        .then((check) =>{
+                            if(check[0].email == user[0].email){
+                                resolve(false);
+                            }
+                            else 
+                                resolve(true);
+                        })
+                          
+                    } else 
+                        resolve(false);
+                }).catch((error) =>{
+                    console.log(error);
+                    reject(new processError());
+                });
+            });
+    }
+
+    createUserEmailCheck(userEmail: string): Promise<boolean>{
+        return new Promise((resolve, reject) =>{
+
+                db.knx("user").select("*").where("email", userEmail)
+
+                .then((user) =>{
+                    if(user[0]){
+                        resolve(true);   
                     } else 
                         resolve(false);
                 }).catch((error) =>{
@@ -75,11 +102,11 @@ export default class userRepository {
 
             db.knx("user").where("id", userId).update(updatedUser).returning("id")
 
-            .then((user) =>{                                                        //user length 0dan büyük mü
+            .then((user) =>{
                 if(user[0]){
                     resolve(new userUpdatedbyId(user[0].id));
                 } else 
-                    reject(new userNotFound());
+                    reject(new userNotFound());                                                         //Update Error.(DB)
             }).catch((error) =>{
                 console.log(error);
                 reject(new processError());

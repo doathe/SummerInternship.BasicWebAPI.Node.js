@@ -1,8 +1,7 @@
-import express from 'express';
 import { userModel } from '../model/user-model';
 import userRepository from '../repository/user-repository';
 import { CRUD } from '../model/CRUD';
-import HttpException, { processError, userNotFound, userAlreadyExist } from '../common/http-exception';
+import { userNotFound, userAlreadyExist, emailAlreadyExist } from '../common/http-exception';
 import { successRes } from '../common/success';
 
 class userService implements CRUD{
@@ -16,7 +15,7 @@ class userService implements CRUD{
     create(resource: userModel): Promise<successRes>{
         return new Promise((resolve, reject) =>{
 
-            this.userRepo.getUserByEmail(resource.email).then((exist) =>{
+            this.userRepo.createUserEmailCheck(resource.email).then((exist) =>{
                 if(exist == false){
                         this.userRepo.addUser(resource).then((user) =>{
                         resolve(user);
@@ -75,7 +74,7 @@ class userService implements CRUD{
 
             this.userRepo.userCheck(resourceId).then((exist) =>{
                 if(exist == true){
-                    this.userRepo.getUserByEmail(resource.email).then((exist) =>{
+                    this.userRepo.updateUserEmailCheck(resourceId, resource.email).then((exist) =>{
                         if(exist == false){
                                 this.userRepo.updateUserById(resourceId,resource).then((succ_res) =>{
                                 resolve(succ_res);
@@ -85,7 +84,7 @@ class userService implements CRUD{
                             }); 
                         }
                         else{
-                            reject(new userAlreadyExist());
+                            reject(new emailAlreadyExist());
                         }
                     }).catch((err: Error) =>{
                         console.log('Update error.');
